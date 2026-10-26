@@ -8,12 +8,15 @@
   });
   if(typeof PHOTOS==="object"){Object.keys(PHOTOS).forEach(function(k){if(P[k])PHOTOS[k]=D(P[k])});if(typeof renderProj==="function")renderProj()}
 })();
-/* Visit alert: links with ?ref=NAME send a push notification once per browser session. */
+/* Visit alert: every visit sends a push notification once per browser session.
+   Open the site once with ?owner=1 to mute alerts from that browser; ?owner=0 unmutes. */
 (function(){
   try{
-    var ref=new URLSearchParams(location.search).get("ref");
-    if(!ref)return;
-    ref=ref.replace(/[^\w\- ]/g,"").slice(0,40);
+    var q=new URLSearchParams(location.search);
+    if(q.get("owner")==="1"){localStorage.setItem("mpes-owner","1")}
+    if(q.get("owner")==="0"){localStorage.removeItem("mpes-owner")}
+    if(localStorage.getItem("mpes-owner"))return;
+    var ref=(q.get("ref")||"Someone").replace(/[^\w\- ]/g,"").slice(0,40)||"Someone";
     var key="mpes-ref-"+ref;
     if(sessionStorage.getItem(key))return;
     sessionStorage.setItem(key,"1");
